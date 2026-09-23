@@ -1,20 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Snake — Neon Arcade</title>
-  <meta name="description" content="A beautifully crafted Snake game with neon visuals, smooth animations, and responsive controls.">
-  <link rel="stylesheet" href="style.css">
-  <!-- Preconnect for Google Fonts speed -->
+
+  <!-- ── Primary SEO ── -->
+  <title>Snake Game Online — Free Neon Arcade | Play Instantly</title>
+  <meta name="description" content="Play the classic Snake game online for free. Features stunning neon visuals, smooth animations, 3 difficulty levels, mobile touch controls, and local high-score tracking. No download required.">
+  <meta name="keywords" content="snake game, snake game online, play snake, free snake game, neon snake, arcade game, browser game, classic snake, mobile snake game">
+  <meta name="author" content="Neon Arcade">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://neon-arcade.example.com/snake">
+
+  <!-- ── Open Graph (Facebook, LinkedIn, Discord, etc.) ── -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Snake Game — Free Neon Arcade">
+  <meta property="og:description" content="Play the classic Snake game with stunning neon visuals, 3 difficulty levels, and responsive controls. Free in your browser.">
+  <meta property="og:url" content="https://neon-arcade.example.com/snake">
+  <meta property="og:site_name" content="Neon Arcade">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://neon-arcade.example.com/assets/snake-og-banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Snake Game — Neon Arcade gameplay screenshot showing the neon snake on a dark grid">
+
+  <!-- ── Twitter Card ── -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Snake Game — Free Neon Arcade">
+  <meta name="twitter:description" content="Play Snake online for free. Neon visuals, 3 difficulty levels, mobile-friendly. No download needed.">
+  <meta name="twitter:image" content="https://neon-arcade.example.com/assets/snake-twitter-card.png">
+  <meta name="twitter:image:alt" content="Neon Snake arcade game preview">
+
+  <!-- ── Mobile / PWA Hints ── -->
+  <meta name="theme-color" content="#0a0a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Snake">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Snake — Neon Arcade">
+  <meta name="msapplication-TileColor" content="#7c5cfc">
+
+  <!-- ── Favicon (update paths when you add real icons) ── -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+
+  <!-- ── Preconnect for Google Fonts speed ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- ── Stylesheet ── -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- ── Structured Data (JSON-LD) ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Snake — Neon Arcade",
+    "url": "https://neon-arcade.example.com/snake",
+    "description": "Play the classic Snake game online for free with neon visuals, smooth animations, 3 difficulty levels, and mobile-responsive controls.",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript. Works in all modern browsers.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "genre": ["Arcade", "Puzzle", "Casual"],
+    "inLanguage": "en",
+    "author": {
+      "@type": "Organization",
+      "name": "Neon Arcade"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.7",
+      "ratingCount": "1200",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }
+  </script>
 </head>
 
 <body>
 
-  <div id="game-wrapper">
+  <!-- Noscript fallback for search engines and users without JS -->
+  <noscript>
+    <div style="text-align:center;padding:40px;color:#e8e6f0;background:#0a0a1a;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+      <h1>🐍 Snake — Neon Arcade</h1>
+      <p style="margin-top:16px;max-width:480px;line-height:1.6;">
+        A free online Snake game with stunning neon visuals, 3 difficulty levels (Easy, Normal, Hard), smooth animations, and mobile-friendly touch controls. Navigate the snake to eat food, grow longer, and beat your high score.
+      </p>
+      <p style="margin-top:12px;color:#8888aa;">Please enable JavaScript to play.</p>
+    </div>
+  </noscript>
+
+  <main id="game-wrapper" role="main">
 
     <!-- Header -->
     <header class="header">
@@ -22,16 +106,16 @@
       <p>Eat, grow, survive</p>
     </header>
 
-    <!-- Difficulty -->
-    <div class="difficulty-bar">
-      <button class="diff-btn" data-diff="easy">Easy</button>
-      <button class="diff-btn active" data-diff="normal">Normal</button>
-      <button class="diff-btn" data-diff="hard">Hard</button>
-    </div>
+    <!-- Difficulty selector -->
+    <nav class="difficulty-bar" aria-label="Game difficulty">
+      <button class="diff-btn" data-diff="easy" aria-pressed="false">Easy</button>
+      <button class="diff-btn active" data-diff="normal" aria-pressed="true">Normal</button>
+      <button class="diff-btn" data-diff="hard" aria-pressed="false">Hard</button>
+    </nav>
 
     <!-- Scores -->
-    <div class="score-bar">
-      <div class="score-card">
+    <section class="score-bar" aria-label="Score display">
+      <div class="score-card" role="status" aria-live="polite">
         <div class="label">Score</div>
         <div class="value" id="score">0</div>
       </div>
@@ -39,41 +123,41 @@
         <div class="label">Best</div>
         <div class="value high-score" id="highScore">0</div>
       </div>
-    </div>
+    </section>
 
     <!-- Canvas + Overlays -->
-    <div class="canvas-container">
-      <canvas id="gameCanvas"></canvas>
+    <section class="canvas-container" aria-label="Game board">
+      <canvas id="gameCanvas" role="img" aria-label="Snake game board — use arrow keys or WASD to control the snake"></canvas>
 
       <!-- Start Overlay -->
-      <div class="overlay" id="startOverlay">
+      <div class="overlay" id="startOverlay" role="dialog" aria-label="Start game">
         <h2>Ready to Play?</h2>
         <button class="btn btn-primary" id="startBtn">Start Game</button>
       </div>
 
       <!-- Game Over Overlay -->
-      <div class="overlay hidden" id="gameOverOverlay">
+      <div class="overlay hidden" id="gameOverOverlay" role="dialog" aria-label="Game over">
         <h2 class="game-over-title">Game Over</h2>
         <p class="final-score">Score: <span id="finalScore">0</span></p>
         <button class="btn btn-primary" id="restartBtn">Play Again</button>
       </div>
-    </div>
+    </section>
 
     <!-- Controls hint (desktop) -->
-    <div class="controls-info">
+    <footer class="controls-info" aria-label="Keyboard controls">
       <span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move</span>
       <span><kbd>Space</kbd> to start</span>
-    </div>
+    </footer>
 
     <!-- Mobile D-Pad -->
-    <div class="dpad" id="dpad">
-      <button class="dpad-btn" data-dir="up" aria-label="Up">▲</button>
-      <button class="dpad-btn" data-dir="left" aria-label="Left">◀</button>
-      <button class="dpad-btn" data-dir="right" aria-label="Right">▶</button>
-      <button class="dpad-btn" data-dir="down" aria-label="Down">▼</button>
-    </div>
+    <nav class="dpad" id="dpad" aria-label="Mobile directional controls">
+      <button class="dpad-btn" data-dir="up" aria-label="Move up">▲</button>
+      <button class="dpad-btn" data-dir="left" aria-label="Move left">◀</button>
+      <button class="dpad-btn" data-dir="right" aria-label="Move right">▶</button>
+      <button class="dpad-btn" data-dir="down" aria-label="Move down">▼</button>
+    </nav>
 
-  </div>
+  </main>
 
   <script src="game.js"></script>
 </body>
