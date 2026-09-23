@@ -185,6 +185,7 @@ canvas#gameCanvas {
   display: block;
   background: var(--bg-secondary);
   border-radius: var(--radius);
+  touch-action: none;           /* prevent browser scroll/zoom on canvas */
 }
 
 /* ── Overlay ── */
@@ -318,6 +319,7 @@ canvas#gameCanvas {
   transition: background .15s, border-color .15s, transform .1s;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  touch-action: none;            /* prevent browser intercepting touches */
 }
 
 .dpad-btn:active {
@@ -366,10 +368,25 @@ canvas#gameCanvas {
 }
 
 /* ── Responsive ── */
+
+/* Width-based breakpoints */
 @media (max-width: 560px) {
   :root { --cell-px: 16px; }
 
+  body {
+    justify-content: flex-start;   /* don't center — let content start from top */
+    padding-top: env(safe-area-inset-top, 8px);
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+    overflow-y: auto;
+  }
+
+  #game-wrapper {
+    gap: 10px;
+    padding: 10px 10px 16px;
+  }
+
   .header h1 { font-size: 1.6rem; }
+  .header p  { font-size: .75rem; margin-top: 2px; }
   .score-card { min-width: 90px; padding: 8px 14px; }
   .score-card .value { font-size: 1.3rem; }
   .controls-info { display: none; }
@@ -378,6 +395,87 @@ canvas#gameCanvas {
 
 @media (max-width: 380px) {
   :root { --cell-px: 14px; }
+}
+
+/* ── Height-based breakpoints (short phones) ── */
+
+/* Phones under 740px tall — tighten everything */
+@media (max-height: 740px) and (max-width: 560px) {
+  #game-wrapper {
+    gap: 6px;
+    padding: 6px 10px 10px;
+  }
+
+  .header h1 { font-size: 1.35rem; }
+  .header p  { display: none; }
+
+  .score-bar { gap: 10px; }
+  .score-card { padding: 5px 12px; min-width: 80px; }
+  .score-card .label { font-size: .6rem; }
+  .score-card .value { font-size: 1.1rem; }
+
+  .difficulty-bar { gap: 5px; }
+  .diff-btn { padding: 5px 14px; font-size: .68rem; }
+
+  .dpad {
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 50px);
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .dpad-btn { font-size: 1.1rem; border-radius: 10px; }
+}
+
+/* Very short phones under 640px — aggressive compression */
+@media (max-height: 640px) and (max-width: 560px) {
+  :root { --cell-px: 14px; }
+
+  #game-wrapper {
+    gap: 4px;
+    padding: 4px 8px 8px;
+  }
+
+  .header h1 { font-size: 1.15rem; }
+
+  .score-bar { gap: 8px; }
+  .score-card { padding: 4px 10px; min-width: 70px; }
+  .score-card .value { font-size: 1rem; }
+
+  .difficulty-bar { gap: 4px; }
+  .diff-btn { padding: 4px 12px; font-size: .62rem; }
+
+  .dpad {
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(3, 44px);
+    gap: 3px;
+    margin-top: 2px;
+  }
+
+  .dpad-btn { font-size: 1rem; border-radius: 8px; }
+}
+
+/* Extremely short screens under 540px — minimal mode */
+@media (max-height: 540px) and (max-width: 560px) {
+  :root { --cell-px: 12px; }
+
+  .header { display: none; }
+
+  .score-bar { gap: 6px; }
+  .score-card { padding: 3px 8px; min-width: 60px; }
+  .score-card .label { font-size: .55rem; letter-spacing: 1px; }
+  .score-card .value { font-size: .9rem; }
+
+  .difficulty-bar { display: none; }
+
+  .dpad {
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+    gap: 2px;
+    margin-top: 0;
+  }
+
+  .dpad-btn { font-size: .9rem; border-radius: 7px; }
 }
 
 /* ── Particles (eaten food effect) ── */
