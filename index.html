@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Snake — Neon Arcade</title>
+  <meta name="description" content="A beautifully crafted Snake game with neon visuals, smooth animations, and responsive controls.">
+  <link rel="stylesheet" href="style.css">
+  <!-- Preconnect for Google Fonts speed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+
+<body>
+
+  <div id="game-wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <h1>🐍 Snake</h1>
+      <p>Eat, grow, survive</p>
+    </header>
+
+    <!-- Difficulty -->
+    <div class="difficulty-bar">
+      <button class="diff-btn" data-diff="easy">Easy</button>
+      <button class="diff-btn active" data-diff="normal">Normal</button>
+      <button class="diff-btn" data-diff="hard">Hard</button>
+    </div>
+
+    <!-- Scores -->
+    <div class="score-bar">
+      <div class="score-card">
+        <div class="label">Score</div>
+        <div class="value" id="score">0</div>
+      </div>
+      <div class="score-card">
+        <div class="label">Best</div>
+        <div class="value high-score" id="highScore">0</div>
+      </div>
+    </div>
+
+    <!-- Canvas + Overlays -->
+    <div class="canvas-container">
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- Start Overlay -->
+      <div class="overlay" id="startOverlay">
+        <h2>Ready to Play?</h2>
+        <button class="btn btn-primary" id="startBtn">Start Game</button>
+      </div>
+
+      <!-- Game Over Overlay -->
+      <div class="overlay hidden" id="gameOverOverlay">
+        <h2 class="game-over-title">Game Over</h2>
+        <p class="final-score">Score: <span id="finalScore">0</span></p>
+        <button class="btn btn-primary" id="restartBtn">Play Again</button>
+      </div>
+    </div>
+
+    <!-- Controls hint (desktop) -->
+    <div class="controls-info">
+      <span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move</span>
+      <span><kbd>Space</kbd> to start</span>
+    </div>
+
+    <!-- Mobile D-Pad -->
+    <div class="dpad" id="dpad">
+      <button class="dpad-btn" data-dir="up" aria-label="Up">▲</button>
+      <button class="dpad-btn" data-dir="left" aria-label="Left">◀</button>
+      <button class="dpad-btn" data-dir="right" aria-label="Right">▶</button>
+      <button class="dpad-btn" data-dir="down" aria-label="Down">▼</button>
+    </div>
+
+  </div>
+
+  <script src="game.js"></script>
+</body>
+
+</html>
