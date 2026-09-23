@@ -305,30 +305,41 @@
   });
 
   /* ── Mobile D-Pad ── */
+  const DPAD_DIRS = {
+    up:    { x:  0, y: -1 },
+    down:  { x:  0, y:  1 },
+    left:  { x: -1, y:  0 },
+    right: { x:  1, y:  0 },
+  };
+
   document.querySelectorAll('.dpad-btn').forEach(btn => {
-    const dirs = {
-      up:    { x:  0, y: -1 },
-      down:  { x:  0, y:  1 },
-      left:  { x: -1, y:  0 },
-      right: { x:  1, y:  0 },
-    };
-    btn.addEventListener('touchstart', e => {
+    // Use pointerdown — works for touch, mouse, and pen on all platforms
+    btn.addEventListener('pointerdown', e => {
       e.preventDefault();
-      const dir = dirs[btn.dataset.dir];
+      const dir = DPAD_DIRS[btn.dataset.dir];
       if (dir && (dir.x !== -direction.x || dir.y !== -direction.y)) {
         nextDirection = dir;
       }
     });
+    // Prevent long-press context menu on mobile
+    btn.addEventListener('contextmenu', e => e.preventDefault());
   });
 
   /* ── Touch swipe support ── */
   let touchStartX = 0, touchStartY = 0;
   canvas.addEventListener('touchstart', e => {
+    e.preventDefault();           // prevent scroll / zoom
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
-  }, { passive: true });
+  }, { passive: false });
+
+  // Prevent scrolling while dragging over the canvas
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+  }, { passive: false });
 
   canvas.addEventListener('touchend', e => {
+    e.preventDefault();
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
     const absDx = Math.abs(dx);
@@ -340,13 +351,17 @@
     else               dir = dy > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 };
 
     if (dir.x !== -direction.x || dir.y !== -direction.y) nextDirection = dir;
-  }, { passive: true });
+  }, { passive: false });
 
   /* ── Difficulty selector ── */
   diffBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      diffBtns.forEach(b => b.classList.remove('active'));
+      diffBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       difficulty = btn.dataset.diff;
       if (!running) interval = SPEEDS[difficulty];
     });
