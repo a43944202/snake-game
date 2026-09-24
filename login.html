@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Neon Arcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-container {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius);
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn .8s ease-out;
+      box-shadow: 0 4px 40px rgba(0,0,0,.45), 0 0 80px rgba(124,92,252,.08);
+      z-index: 10;
+    }
+    .auth-container h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent-light), var(--neon-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .auth-container p {
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      background: rgba(10, 10, 26, 0.6);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .auth-input::placeholder {
+      color: var(--text-muted);
+    }
+    .auth-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(124,92,252,.25);
+    }
+    .auth-toggle {
+      margin-top: 24px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+    .auth-toggle a {
+      color: var(--neon-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 4px;
+      transition: text-shadow 0.2s;
+    }
+    .auth-toggle a:hover {
+      text-decoration: underline;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+    .back-link:hover {
+      color: var(--text-primary);
+    }
+    
+    /* Premium Expandable Fields */
+    .signup-fields {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .signup-fields.show {
+      display: flex;
+      animation: slideDownFade 0.4s ease-out forwards;
+    }
+    @keyframes slideDownFade {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .input-row {
+      display: flex;
+      gap: 16px;
+    }
+    @media (max-width: 480px) {
+      .input-row { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="index.html" class="back-link">← Back to Game</a>
+
+  <div class="auth-container">
+    <h2 id="authTitle">Welcome Back</h2>
+    <p id="authSubtitle">Login to save your high scores</p>
+
+    <form class="auth-form" id="authForm">
+      <div class="signup-fields" id="signupFields">
+        <div class="input-row">
+          <input type="text" class="auth-input" id="firstName" placeholder="First Name" aria-label="First Name">
+          <input type="text" class="auth-input" id="lastName" placeholder="Last Name" aria-label="Last Name">
+        </div>
+        <input type="email" class="auth-input" id="email" placeholder="Email Address" aria-label="Email Address">
+        <input type="tel" class="auth-input" id="phone" placeholder="Phone Number" aria-label="Phone Number">
+      </div>
+      <input type="text" class="auth-input" id="username" placeholder="Username" aria-label="Username" required>
+      <input type="password" class="auth-input" id="password" placeholder="Password" aria-label="Password" required>
+      <button type="submit" class="btn btn-primary" id="authSubmitBtn">Login</button>
+    </form>
+
+    <div class="auth-toggle">
+      <span id="authToggleText">Don't have an account?</span> 
+      <a href="#" id="authToggleLink">Sign Up</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('authForm');
+    const toggleLink = document.getElementById('authToggleLink');
+    const title = document.getElementById('authTitle');
+    const subtitle = document.getElementById('authSubtitle');
+    const submitBtn = document.getElementById('authSubmitBtn');
+    const toggleText = document.getElementById('authToggleText');
+    const signupFields = document.getElementById('signupFields');
+    const extraInputs = signupFields.querySelectorAll('input');
+    
+    let isLogin = true;
+
+    toggleLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      isLogin = !isLogin;
+      if (isLogin) {
+        title.textContent = 'Welcome Back';
+        subtitle.textContent = 'Login to save your high scores';
+        submitBtn.textContent = 'Login';
+        toggleText.textContent = "Don't have an account?";
+        toggleLink.textContent = 'Sign Up';
+        
+        signupFields.classList.remove('show');
+        extraInputs.forEach(input => input.removeAttribute('required'));
+      } else {
+        title.textContent = 'Create Account';
+        subtitle.textContent = 'Join the Neon Arcade';
+        submitBtn.textContent = 'Sign Up';
+        toggleText.textContent = "Already have an account?";
+        toggleLink.textContent = 'Login';
+        
+        signupFields.classList.add('show');
+        extraInputs.forEach(input => input.setAttribute('required', 'true'));
+      }
+    });
+
+    // Helper to get users from localStorage
+    function getUsers() {
+      const usersStr = localStorage.getItem('arcadeUsers');
+      return usersStr ? JSON.parse(usersStr) : [];
+    }
+
+    // Helper to save users to localStorage
+    function saveUsers(users) {
+      localStorage.setItem('arcadeUsers', JSON.stringify(users));
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      let users = getUsers();
+
+      if (isLogin) {
+        // Handle Login
+        const user = users.find(u => u.username === username && u.password === password);
+        if (user) {
+          localStorage.setItem('currentUser', JSON.stringify({
+            username: user.username,
+            firstName: user.firstName
+          }));
+          alert('Login successful! Welcome back, ' + (user.firstName || username));
+          window.location.href = 'index.html';
+        } else {
+          alert('Invalid username or password!');
+        }
+      } else {
+        // Handle Signup
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        const userExists = users.some(u => u.username === username);
+        if (userExists) {
+          alert('Username already exists. Please choose a different one.');
+          return;
+        }
+
+        const newUser = {
+          firstName,
+          lastName,
+          email,
+          phone,
+          username,
+          password
+        };
+
+        users.push(newUser);
+        saveUsers(users);
+
+        alert('Account created successfully! You can now log in.');
+        
+        // Clear password fields and switch to login
+        document.getElementById('password').value = '';
+        toggleLink.click(); 
+      }
+    });
+  </script>
+</body>
+
+</html>

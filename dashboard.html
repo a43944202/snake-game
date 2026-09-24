@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - Neon Arcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dashboard-container {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius);
+      padding: 40px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      animation: fadeIn .8s ease-out;
+      box-shadow: 0 4px 40px rgba(0,0,0,.45), 0 0 80px rgba(124,92,252,.08);
+      z-index: 10;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-container h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--neon-gold), #ffcf54);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .dashboard-container p {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+    
+    .leaderboard-list {
+      list-style: none;
+      overflow-y: auto;
+      padding: 0;
+      margin: 0;
+      flex-grow: 1;
+      border-top: 1px solid var(--border-glow);
+      border-bottom: 1px solid var(--border-glow);
+    }
+    
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    
+    .leaderboard-item:hover {
+      background: rgba(124, 92, 252, 0.1);
+    }
+    
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+    
+    .rank-col {
+      font-weight: 800;
+      width: 40px;
+      text-align: left;
+      color: var(--text-muted);
+    }
+    
+    .name-col {
+      flex-grow: 1;
+      text-align: left;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    .score-col {
+      font-weight: 700;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(34,217,127,.35);
+    }
+    
+    .top-1 .rank-col { color: var(--neon-gold); text-shadow: 0 0 10px rgba(251,191,36,.5); }
+    .top-2 .rank-col { color: #c0c0c0; text-shadow: 0 0 10px rgba(192,192,192,.5); }
+    .top-3 .rank-col { color: #cd7f32; text-shadow: 0 0 10px rgba(205,127,50,.5); }
+    
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+    .back-link:hover {
+      color: var(--text-primary);
+    }
+    
+    .empty-state {
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="index.html" class="back-link">← Back to Game</a>
+
+  <div class="dashboard-container">
+    <h2>🏆 Hall of Fame</h2>
+    <p>Top players and their high scores</p>
+
+    <ul class="leaderboard-list" id="leaderboardList">
+      <!-- Generated via JS -->
+    </ul>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const list = document.getElementById("leaderboardList");
+      const usersStr = localStorage.getItem("arcadeUsers");
+      let users = usersStr ? JSON.parse(usersStr) : [];
+      
+      // Filter out users with no high score, and sort descending
+      let ranked = users
+        .filter(u => typeof u.highScore === 'number' && u.highScore > 0)
+        .sort((a, b) => b.highScore - a.highScore);
+        
+      if (ranked.length === 0) {
+        list.innerHTML = '<div class="empty-state">No scores yet. Play the game to get on the board!</div>';
+        return;
+      }
+      
+      list.innerHTML = '';
+      ranked.forEach((user, index) => {
+        const rank = index + 1;
+        const li = document.createElement("li");
+        li.className = "leaderboard-item";
+        if (rank <= 3) {
+          li.classList.add(`top-${rank}`);
+        }
+        
+        const name = user.firstName ? `${user.firstName} (${user.username})` : user.username;
+        
+        li.innerHTML = `
+          <span class="rank-col">#${rank}</span>
+          <span class="name-col">${name}</span>
+          <span class="score-col">${user.highScore}</span>
+        `;
+        
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
