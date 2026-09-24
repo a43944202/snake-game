@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ── Primary SEO ── -->
   <title>Snake Game Online — Free Neon Arcade | Play Instantly</title>
@@ -98,13 +98,21 @@
     </div>
   </noscript>
 
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <button class="nav-btn" onclick="window.location.href='dashboard.html'">🏆 Leaderboard</button>
+    <button class="nav-btn login-btn" id="authBtn" onclick="window.location.href='login.html'">Login / Sign Up</button>
+  </nav>
+
+  <!-- Logo/Header Top Left -->
+  <header class="header">
+    <h1>🐍 Snake</h1>
+    <p>Eat, grow, survive</p>
+  </header>
+
   <main id="game-wrapper" role="main">
 
-    <!-- Header -->
-    <header class="header">
-      <h1>🐍 Snake</h1>
-      <p>Eat, grow, survive</p>
-    </header>
+
 
     <!-- Difficulty selector -->
     <nav class="difficulty-bar" aria-label="Game difficulty">
