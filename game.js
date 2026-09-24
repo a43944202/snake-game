@@ -22,27 +22,72 @@
   let difficulty = 'normal';
 
   /* ── State ── */
-  let snake, direction, nextDirection, food, score, highScore, running, loopId, lastTime, interval;
+  let snake, direction, inputQueue, food, score, highScore, running, loopId, lastTime, interval;
   let trail = [];            // fading tail trail
   let particles = [];        // burst particles
 
   /* ── Init canvas size ── */
+  let gridCanvas;
+  function preRenderGrid(cell) {
+    gridCanvas = document.createElement('canvas');
+    gridCanvas.width = canvas.width;
+    gridCanvas.height = canvas.height;
+    const gctx = gridCanvas.getContext('2d');
+    gctx.fillStyle = 'rgba(255,255,255,.025)';
+    for (let x = 0; x < GRID; x++) {
+      for (let y = 0; y < GRID; y++) {
+        gctx.fillRect(x * cell + cell / 2 - .5, y * cell + cell / 2 - .5, 1, 1);
+      }
+    }
+  }
+
   function resizeCanvas() {
     const cell = CELL();
     canvas.width  = GRID * cell;
     canvas.height = GRID * cell;
+    preRenderGrid(cell);
   }
 
   /* ── High score persistence ── */
   function loadHighScore() {
-    highScore = parseInt(localStorage.getItem('snake_hs') || '0', 10);
+    const currentUserStr = localStorage.getItem('currentUser');
+    if (currentUserStr) {
+      const currentUser = JSON.parse(currentUserStr);
+      let users = JSON.parse(localStorage.getItem('arcadeUsers') || '[]');
+      const user = users.find(u => u.username === currentUser.username);
+      highScore = user && user.highScore ? user.highScore : parseInt(localStorage.getItem('snake_hs') || '0', 10);
+      
+      const authBtn = document.getElementById('authBtn');
+      if (authBtn) {
+        authBtn.textContent = 'Logout (' + (currentUser.firstName || currentUser.username) + ')';
+        authBtn.onclick = function() {
+          localStorage.removeItem('currentUser');
+          window.location.reload();
+        };
+      }
+    } else {
+      highScore = parseInt(localStorage.getItem('snake_hs') || '0', 10);
+    }
     highScoreEl.textContent = highScore;
   }
+  
   function saveHighScore() {
     if (score > highScore) {
       highScore = score;
       localStorage.setItem('snake_hs', highScore);
       highScoreEl.textContent = highScore;
+      
+      const currentUserStr = localStorage.getItem('currentUser');
+      if (currentUserStr) {
+        const currentUser = JSON.parse(currentUserStr);
+        let users = JSON.parse(localStorage.getItem('arcadeUsers') || '[]');
+        const userIndex = users.findIndex(u => u.username === currentUser.username);
+        
+        if (userIndex !== -1) {
+          users[userIndex].highScore = highScore;
+          localStorage.setItem('arcadeUsers', JSON.stringify(users));
+        }
+      }
     }
   }
 
@@ -86,7 +131,7 @@
     const mid = Math.floor(GRID / 2);
     snake = [{ x: mid, y: mid }, { x: mid - 1, y: mid }, { x: mid - 2, y: mid }];
     direction = { x: 1, y: 0 };
-    nextDirection = { ...direction };
+    inputQueue = [];
     score = 0;
     scoreEl.textContent = '0';
     trail = [];
@@ -100,7 +145,7 @@
     if (!running) return;
     loopId = requestAnimationFrame(gameLoop);
     if (!lastTime) lastTime = timestamp;
-    if (timestamp - lastTime < interval) { draw(); return; }
+    if (timestamp - lastTime < interval) return; // OPTIMIZATION: Only draw when game state updates
     lastTime = timestamp;
     update();
     draw();
@@ -108,29 +153,40 @@
 
   /* ── Update ── */
   function update() {
-    direction = { ...nextDirection };
+    if (inputQueue.length > 0) {
+      direction = inputQueue.shift();
+    }
 
     const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
     // Wall collision
     if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID) { gameOver(); return; }
 
-    // Self collision
-    if (snake.some(s => s.x === head.x && s.y === head.y)) { gameOver(); return; }
-
-    snake.unshift(head);
-
+    let ateFood = false;
     // Eat food
     if (head.x === food.x && head.y === food.y) {
+      ateFood = true;
       score++;
       scoreEl.textContent = score;
       spawnParticles(food.x, food.y);
       placeFood();
       // Slight speed-up
       interval = Math.max(45, interval - 1);
-    } else {
+    }
+
+    snake.unshift(head);
+
+    if (!ateFood) {
       const removed = snake.pop();
       trail.push({ ...removed, alpha: .45 });
+    }
+
+    // Self collision (check after popping tail)
+    for (let i = 1; i < snake.length; i++) {
+      if (snake[i].x === head.x && snake[i].y === head.y) {
+        gameOver();
+        return;
+      }
     }
 
     // Fade trail
@@ -142,11 +198,10 @@
     const cell = CELL();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Grid dots
-    ctx.fillStyle = 'rgba(255,255,255,.025)';
-    for (let x = 0; x < GRID; x++)
-      for (let y = 0; y < GRID; y++)
-        ctx.fillRect(x * cell + cell / 2 - .5, y * cell + cell / 2 - .5, 1, 1);
+    // Grid dots (pre-rendered optimization)
+    if (gridCanvas) {
+      ctx.drawImage(gridCanvas, 0, 0);
+    }
 
     // Trail
     trail.forEach(t => {
@@ -240,6 +295,11 @@
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function roundRect(ctx, x, y, w, h, r) {
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, r);
+      return;
+    }
     ctx.beginPath();
     ctx.moveTo(x + r, y);
     ctx.lineTo(x + w - r, y);
@@ -290,9 +350,14 @@
     const dir = KEY_MAP[e.key];
     if (!dir) return;
     e.preventDefault();
+    
+    const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : direction;
+    
     // Prevent 180° turn
-    if (dir.x !== -direction.x || dir.y !== -direction.y) {
-      nextDirection = dir;
+    if (dir.x !== -lastDir.x || dir.y !== -lastDir.y) {
+      if (inputQueue.length < 3) {
+        inputQueue.push(dir);
+      }
     }
   });
 
@@ -317,8 +382,14 @@
     btn.addEventListener('pointerdown', e => {
       e.preventDefault();
       const dir = DPAD_DIRS[btn.dataset.dir];
-      if (dir && (dir.x !== -direction.x || dir.y !== -direction.y)) {
-        nextDirection = dir;
+      if (!dir) return;
+      
+      const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : direction;
+      
+      if (dir.x !== -lastDir.x || dir.y !== -lastDir.y) {
+        if (inputQueue.length < 3) {
+          inputQueue.push(dir);
+        }
       }
     });
     // Prevent long-press context menu on mobile
@@ -350,7 +421,13 @@
     if (absDx > absDy) dir = dx > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 };
     else               dir = dy > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 };
 
-    if (dir.x !== -direction.x || dir.y !== -direction.y) nextDirection = dir;
+    const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : direction;
+    
+    if (dir.x !== -lastDir.x || dir.y !== -lastDir.y) {
+      if (inputQueue.length < 3) {
+        inputQueue.push(dir);
+      }
+    }
   }, { passive: false });
 
   /* ── Difficulty selector ── */
